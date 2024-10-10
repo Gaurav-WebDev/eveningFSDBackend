@@ -43,19 +43,21 @@ exports.getAllStudents = async (req , res)=>{
 exports.loginStudentApi = async (req , res)=>{
     let {email , password} = req.body;
 
-    let isUserExist = await Student.find({"email" : email});
+    let isUserExist = await Student.findOne({"email" : email});
 
-    isUserExist = await isUserExist[0].json();
+    // console.log(isUserExist);
 
     if(isUserExist){
         let hashedPass = isUserExist.password;
-        console.log(hashedPass);
+        // console.log(hashedPass);
 
         let isPasswordMatch = bcrypt.compareSync(password , hashedPass);
 
-        delete isUserExist.password;
+        // console.log(isPasswordMatch)
 
         if(isPasswordMatch){
+            isUserExist = isUserExist.toObject(); //POJO
+            delete isUserExist.password;
             res.status(200).json({
                 "message" : "Login Success",
                 "data" : isUserExist
